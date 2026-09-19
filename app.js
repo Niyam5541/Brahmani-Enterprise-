@@ -9,7 +9,39 @@ function categories(){return [...new Set(expanded.map(p=>p.category))].sort()}
 categories().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;els.category.appendChild(o)});
 ['Leno Bobin','Pump Cam','Nozzle','Dobby Bearing','Cutter Lever','Feeder','Bearing','Catchcord'].forEach(q=>{const b=document.createElement('button');b.textContent=q;b.onclick=()=>{els.search.value=q;filterProducts()};els.quick.appendChild(b)});
 function filterProducts(){const q=norm(els.search.value),cat=els.category.value;filtered=expanded.filter(p=>{const hay=norm(p.name+' '+p.category);const words=q.split(' ').filter(Boolean);return (!cat||p.category===cat)&&words.every(w=>hay.includes(w))});visible=32;renderProducts()}
-function renderProducts(){els.grid.innerHTML='';filtered.slice(0,visible).forEach(p=>{const card=document.createElement('article');card.className='product-card';card.innerHTML=`<div class="product-icon">${iconFor(p.category)}</div><div class="product-category">${p.category}</div><h3 class="product-name">${p.name}</h3><div class="product-meta">Catalogue page ${p.page}</div><div class="qty-row"><input type="number" min="1" value="1" aria-label="Quantity"><button type="button">Add to Order</button></div>`;const inp=card.querySelector('input');card.querySelector('button').onclick=()=>addCart(p,Math.max(1,parseInt(inp.value)||1));els.grid.appendChild(card)});els.count.textContent=`${filtered.length} part${filtered.length===1?'':'s'} found`;els.load.style.display=visible>=filtered.length?'none':'block'}
+function imageSpec(p){
+ try{
+  const raw=atob(window.IMG_SPEC_B64||'');
+  const i=(p.id-1)*2;
+  if(i+1>=raw.length)return null;
+  const v=(raw.charCodeAt(i)<<8)|raw.charCodeAt(i+1);
+  if(v===65535)return null;
+  return [v>>7,(v>>3)&15,v&7];
+ }catch(e){return null}
+}
+function productPhoto(p){
+ const m=imageSpec(p);
+ if(!m)return `<div class="product-photo fallback"><span>${iconFor(p.category)}</span></div>`;
+ const [pg,row,col]=m;
+ const nano=pg>=11;
+ const cw=nano?36:48, ch=nano?24:32, scale=nano?4:3;
+ const src=(window.SPRITES||{})[pg]||`sprites/p${String(pg).padStart(2,'0')}.webp`;
+ const x=col*cw*scale, y=row*ch*scale;
+ return `<div class="product-photo"><div class="sprite-crop" role="img" aria-label="${p.name.replace(/"/g,'&quot;')}" style="background-image:url('${src}');background-size:${cw*5*scale}px auto;background-position:-${x}px -${y}px"></div></div>`;
+}
+function renderProducts(){
+ els.grid.innerHTML='';
+ filtered.slice(0,visible).forEach(p=>{
+  const card=document.createElement('article');
+  card.className='product-card';
+  card.innerHTML=`${productPhoto(p)}<div class="product-category">${p.category}</div><h3 class="product-name">${p.name}</h3><div class="product-meta">Catalogue page ${p.page} • Photo from catalogue</div><div class="qty-row"><input type="number" min="1" value="1" aria-label="Quantity"><button type="button">Add to Order</button></div>`;
+  const inp=card.querySelector('input');
+  card.querySelector('button').onclick=()=>addCart(p,Math.max(1,parseInt(inp.value)||1));
+  els.grid.appendChild(card);
+ });
+ els.count.textContent=`${filtered.length} part${filtered.length===1?'':'s'} found`;
+ els.load.style.display=visible>=filtered.length?'none':'block';
+}
 function addCart(p,qty){const e=cart.find(x=>x.id===p.id);if(e)e.qty+=qty;else cart.push({...p,qty});saveCart();openCart()}
 function saveCart(){localStorage.setItem('be_cart',JSON.stringify(cart));renderCart()}
 function renderCart(){document.getElementById('cartCount').textContent=cart.reduce((a,b)=>a+b.qty,0);const box=document.getElementById('cartItems');if(!cart.length){box.innerHTML='<div class="empty-cart">Your order cart is empty.<br>Search a part and tap <b>Add to Order</b>.</div>';return}box.innerHTML='';cart.forEach((x,i)=>{const d=document.createElement('div');d.className='cart-line';d.innerHTML=`<div><b>${x.name}</b><small>${x.category}</small></div><div class="cart-controls"><button data-a="minus">−</button><span>${x.qty}</span><button data-a="plus">+</button><button class="remove-btn" data-a="remove">×</button></div>`;d.querySelector('[data-a="minus"]').onclick=()=>{x.qty=Math.max(1,x.qty-1);saveCart()};d.querySelector('[data-a="plus"]').onclick=()=>{x.qty++;saveCart()};d.querySelector('[data-a="remove"]').onclick=()=>{cart.splice(i,1);saveCart()};box.appendChild(d)})}
