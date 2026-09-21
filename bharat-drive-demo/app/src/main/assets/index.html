@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Bharat Drive Demo</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#05090d;color:#fff;font-family:Arial,sans-serif;touch-action:none}canvas{display:block;width:100%;height:100%}.screen{position:fixed;inset:0}.menu{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#07131d,#122b3f);padding:18px;z-index:10}.card{width:min(760px,96vw);background:rgba(8,20,30,.92);border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:22px;box-shadow:0 18px 60px #0008}.brand{display:flex;gap:14px;align-items:center}.logo{width:62px;height:62px;border-radius:20px;background:#e4b63e;color:#0c253b;display:grid;place-items:center;font-size:25px;font-weight:900}.eyebrow{font-size:10px;letter-spacing:.16em;color:#9fb1bd;font-weight:800}.card h1{font-size:clamp(34px,6vw,62px);line-height:.9;margin:3px 0}.gold{color:#e4b63e}.desc{color:#b8c6d0;line-height:1.45}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}label{font-size:11px;color:#a9b8c2;text-transform:uppercase;font-weight:800;letter-spacing:.05em}select{width:100%;margin-top:6px;padding:12px;border-radius:12px;background:#10283a;color:#fff;border:1px solid #ffffff24;min-height:44px}.start{width:100%;min-height:52px;border:0;border-radius:14px;background:#e4b63e;color:#0b1b28;font-size:17px;font-weight:900}.small{font-size:10px;color:#78909f;margin:10px 0 0}.hud{position:fixed;inset:0;pointer-events:none;z-index:4}.top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;gap:8px}.pill,.stats>div{background:#07131dbd;border:1px solid #ffffff22;backdrop-filter:blur(8px);border-radius:13px;padding:8px 11px}.pill{font-size:12px;font-weight:900}.stats{display:flex;gap:6px}.stats>div{text-align:center;min-width:70px;padding:6px 9px}.stats small{display:block;color:#9fb1bd;font-size:8px}.stats strong{font-size:17px}.route{position:absolute;left:12px;top:73px;background:#07131dbd;border:1px solid #ffffff22;border-radius:12px;padding:8px 11px;font-size:11px}.route b{color:#e4b63e}.controls{position:absolute;left:12px;right:12px;bottom:10px;display:flex;justify-content:space-between;align-items:end;pointer-events:none}.cluster{display:flex;gap:10px;pointer-events:auto}.ctl{width:76px;height:76px;border-radius:22px;border:1px solid #ffffff2a;background:#07131dbc;color:#fff;font-weight:900;font-size:25px}.ctl.pedal{height:90px;font-size:12px}.gas{background:#176a42d9}.brake{background:#8d332dd9}.horn{position:absolute;right:12px;top:73px;width:54px;height:48px;border-radius:14px;border:1px solid #ffffff2a;background:#07131dbc;color:#fff;pointer-events:auto;font-size:22px}.pause{position:absolute;right:74px;top:73px;width:54px;height:48px;border-radius:14px;border:1px solid #ffffff2a;background:#07131dbc;color:#fff;pointer-events:auto;font-size:18px}.overlay{position:fixed;inset:0;z-index:20;background:#02070bd9;display:flex;align-items:center;justify-content:center}.overlay .box{width:min(360px,92vw);background:#0c2030;border:1px solid #ffffff25;border-radius:20px;padding:20px;text-align:center}.overlay button{width:100%;margin-top:8px;padding:13px;border:0;border-radius:12px;background:#e4b63e;color:#0b1b28;font-weight:900}.hidden{display:none}.toast{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:30;background:#07131dee;border:1px solid #ffffff25;border-radius:12px;padding:10px 14px;font-weight:800;opacity:0;transition:.2s}.toast.show{opacity:1}@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.stats>div{min-width:55px}.stats strong{font-size:14px}.ctl{width:64px;height:64px}.ctl.pedal{height:76px}.route{top:105px}.horn,.pause{top:105px}}@media(max-width:410px){.grid{grid-template-columns:1fr}.stats>div:nth-child(3){display:none}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="menu" class="screen menu">
+  <div class="card">
+    <div class="brand"><div class="logo">BD</div><div><div class="eyebrow">INDIAN SCENIC CAR SIMULATOR</div><h1>BHARAT <span class="gold">DRIVE</span></h1></div></div>
+    <p class="desc">Drive through India-inspired mountain, ghat, Gujarat village, Rajasthan desert and Konkan coast roads with traffic, rivers, bridges, waterfalls, weather, engine sound and horn.</p>
+    <div class="grid">
+      <label>Route<select id="route"><option value="himalaya">Himalayan Hills</option><option value="ghats">Western Ghats</option><option value="gujarat">Gujarat Village Highway</option><option value="rajasthan">Rajasthan Desert</option><option value="konkan">Konkan Coast</option></select></label>
+      <label>Car<select id="car"><option value="suv">Bharat SUV</option><option value="sedan">Executive Sedan</option><option value="hatch">City Hatch</option></select></label>
+      <label>Weather<select id="weather"><option value="auto">Dynamic</option><option value="clear">Clear</option><option value="rain">Rain</option><option value="fog">Fog</option></select></label>
+    </div>
+    <button id="start" class="start">START DRIVE</button>
+    <p class="small">Demo APK • works offline • routes are game environments inspired by India and are not exact GPS road reproductions.</p>
+  </div>
+</div>
+
+<div id="hud" class="hud hidden">
+  <div class="top">
+    <div class="pill"><span class="gold">BHARAT</span> DRIVE DEMO</div>
+    <div class="stats">
+      <div><small>SPEED</small><strong><span id="speed">0</span></strong></div>
+      <div><small>GEAR</small><strong id="gear">N</strong></div>
+      <div><small>FUEL</small><strong><span id="fuel">100</span>%</strong></div>
+    </div>
+  </div>
+  <div class="route"><b id="routeName">Himalayan Hills</b><br><span id="condition">CLEAR ROAD</span></div>
+  <button id="pause" class="pause">⏸</button>
+  <button id="horn" class="horn">📣</button>
+  <div class="controls">
+    <div class="cluster"><button id="left" class="ctl">◀</button><button id="right" class="ctl">▶</button></div>
+    <div class="cluster"><button id="brake" class="ctl pedal brake">BRAKE</button><button id="gas" class="ctl pedal gas">GAS</button></div>
+  </div>
+</div>
+
+<div id="pauseBox" class="overlay hidden"><div class="box"><h2>Drive Paused</h2><p id="pauseText"></p><button id="resume">RESUME</button><button id="restart">RESTART</button><button id="mainMenu">MAIN MENU</button></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(()=>{
+const c=document.getElementById('game'),x=c.getContext('2d');
+const $=id=>document.getElementById(id);
+let W=960,H=540,dpr=1,last=performance.now(),playing=false,paused=false,t=0,speed=0,lane=0,dist=0,fuel=100,traffic=[],spawn=0,weather='auto',route='himalaya',car='suv',rain=[],audio=null,eng=null,engGain=null,windGain=null;
+const input={l:false,r:false,g:false,b:false};
+const routes={
+himalaya:{name:'Himalayan Hills',sky:['#6ea9d0','#d9eef7'],ground:'#587454',mount:'#617d8c',road:'#44494f',water:true,trees:'pine',curve:1.0},
+ghats:{name:'Western Ghats',sky:['#68a5ad','#c4e1d1'],ground:'#2f6845',mount:'#315b45',road:'#41464b',water:true,trees:'lush',curve:1.2},
+gujarat:{name:'Gujarat Village Highway',sky:['#79b8d5','#d7ebb7'],ground:'#79934f',mount:'#879259',road:'#484b4e',water:true,trees:'dry',curve:.65},
+rajasthan:{name:'Rajasthan Desert',sky:['#82b9d2','#f1cf91'],ground:'#ba8247',mount:'#a96f3f',road:'#4b4947',water:false,trees:'desert',curve:.5},
+konkan:{name:'Konkan Coast',sky:['#65b3d0','#c7eadc'],ground:'#2f6f4a',mount:'#32664b',road:'#41464a',water:true,trees:'palm',curve:1.0}
+};
+const cars={suv:{max:185,acc:62,handle:1},sedan:{max:205,acc:68,handle:1.1},hatch:{max:170,acc:76,handle:1.25}};
+
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';x.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',resize);resize();
+
+function curve(z){return Math.sin(t*.13+z*1.7)*.17*routes[route].curve+Math.sin(t*.041+z*.5)*.10}
+function sky(){
+ const r=routes[route],g=x.createLinearGradient(0,0,0,H*.62);g.addColorStop(0,r.sky[0]);g.addColorStop(1,r.sky[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+ const night=(Math.sin(t*.012)+1)/2<.12;x.globalAlpha=night?.42:1;
+ for(let i=0;i<5;i++){x.fillStyle='#ffffffc8';let cx=((i*240+100-t*4)%(W+260))-80,cy=55+(i%2)*35;x.beginPath();x.arc(cx,cy,25,0,7);x.arc(cx+28,cy+4,34,0,7);x.arc(cx+61,cy,22,0,7);x.fill()}x.globalAlpha=1;
+}
+function mountain(px,base,w,h,col){x.fillStyle=col;x.beginPath();x.moveTo(px,base);x.lineTo(px+w*.5,base-h);x.lineTo(px+w,base);x.closePath();x.fill()}
+function tree(px,py,s,type){
+ if(type==='palm'){x.strokeStyle='#654629';x.lineWidth=5*s;x.beginPath();x.moveTo(px,py+45*s);x.lineTo(px+5*s,py);x.stroke();x.strokeStyle='#2d7146';x.lineWidth=4*s;for(let k=-2;k<=2;k++){x.beginPath();x.moveTo(px+5*s,py);x.lineTo(px+k*18*s,py-15*s+Math.abs(k)*4*s);x.stroke()}return}
+ if(type==='desert'){x.fillStyle='#37613a';x.fillRect(px-3*s,py,6*s,34*s);x.fillRect(px-12*s,py+12*s,12*s,5*s);x.fillRect(px+2*s,py+20*s,12*s,5*s);return}
+ x.fillStyle='#5c402a';x.fillRect(px-4*s,py,8*s,36*s);x.fillStyle=type==='dry'?'#627746':'#2f6a44';x.beginPath();x.arc(px,py,22*s,0,7);x.arc(px-13*s,py+10*s,16*s,0,7);x.arc(px+15*s,py+10*s,17*s,0,7);x.fill()
+}
+function house(px,py,s){x.fillStyle='#e1bd84';x.fillRect(px,py,66*s,42*s);x.fillStyle='#934d32';x.beginPath();x.moveTo(px-6*s,py);x.lineTo(px+33*s,py-26*s);x.lineTo(px+72*s,py);x.closePath();x.fill();x.fillStyle='#47352a';x.fillRect(px+26*s,py+16*s,14*s,26*s)}
+function temple(px,py,s){x.fillStyle='#d69a43';x.fillRect(px,py,52*s,44*s);x.beginPath();x.moveTo(px-4*s,py);x.lineTo(px+26*s,py-55*s);x.lineTo(px+56*s,py);x.closePath();x.fill();x.fillStyle='#804628';x.fillRect(px+19*s,py+17*s,14*s,27*s)}
+function backdrop(){
+ const r=routes[route],hy=H*.52;
+ mountain(-W*.08,hy,W*.45,H*.24,r.mount);mountain(W*.22,hy,W*.48,H*.29,r.mount);mountain(W*.57,hy,W*.5,H*.22,r.mount);
+ x.fillStyle=r.ground;x.fillRect(0,hy,W,H-hy);
+ if(route==='gujarat'){house(W*.06,hy-8,.8);house(W*.79,hy-3,.9);temple(W*.67,hy-25,.8)}
+ if(route==='rajasthan'){x.fillStyle='#d39a59';for(let i=0;i<6;i++){x.beginPath();x.ellipse(i*W/5-W*.08,hy+38+(i%2)*16,W*.16,42,0,0,7);x.fill()}}
+ for(let i=0;i<9;i++)tree((i+.2)*W/9,hy-12+(i%2)*22,.58+(i%3)*.1,r.trees);
+ if(route==='konkan'){x.fillStyle='#3c91b5';x.fillRect(0,hy+25,W,H*.16)}
+}
+function waterfall(){
+ if(!routes[route].water)return;let p=dist%8;if(p<2.4){let bx=W*.82,by=H*.29;x.fillStyle='#405f50';x.fillRect(bx,by,W*.07,H*.24);x.fillStyle='#daf7fb';x.fillRect(bx+W*.027,by+18,W*.018,H*.19);x.fillStyle='#ffffffaa';x.beginPath();x.ellipse(bx+W*.036,by+H*.205,W*.04,9,0,0,7);x.fill()}
+}
+function road(){
+ const hy=H*.54,bot=H;
+ let c0=W*.5+curve(0)*W*.22,c1=W*.5+curve(1)*W*.4;
+ x.fillStyle=routes[route].road;x.beginPath();x.moveTo(c0-W*.075,hy);x.lineTo(c0+W*.075,hy);x.lineTo(c1+W*.43,bot);x.lineTo(c1-W*.43,bot);x.closePath();x.fill();
+ x.strokeStyle='#e7dfbd';x.lineWidth=4;x.beginPath();x.moveTo(c0-W*.075,hy);x.lineTo(c1-W*.43,bot);x.stroke();x.beginPath();x.moveTo(c0+W*.075,hy);x.lineTo(c1+W*.43,bot);x.stroke();
+ x.strokeStyle='#fff';x.setLineDash([22,22]);x.lineWidth=3;x.beginPath();x.moveTo(c0,hy);x.lineTo(c1,bot);x.stroke();x.setLineDash([]);
+ if(routes[route].water&&dist%11>5.4&&dist%11<6.8){x.fillStyle='#4b96b9';x.fillRect(0,H*.68,W,H*.075);x.fillStyle='#73787c';x.fillRect(W*.16,H*.69,W*.68,H*.05);$('condition').textContent='RIVER BRIDGE'}
+}
+function carDraw(px,py,s,color,player){
+ x.save();x.translate(px,py);let w=86*s,h=118*s;x.fillStyle=color;x.beginPath();round(-w/2,-h/2,w,h,12*s);x.fill();x.fillStyle='#172631';x.fillRect(-w*.32,-h*.23,w*.64,h*.28);x.fillStyle='#111';x.fillRect(-w*.57,-h*.25,w*.11,h*.28);x.fillRect(w*.46,-h*.25,w*.11,h*.28);x.fillRect(-w*.57,h*.12,w*.11,h*.28);x.fillRect(w*.46,h*.12,w*.11,h*.28);x.fillStyle=player?'#edc34e':'#f4f1dc';x.fillRect(-w*.3,-h*.47,w*.2,h*.07);x.fillRect(w*.1,-h*.47,w*.2,h*.07);x.restore()
+}
+function round(px,py,w,h,r){x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()}
+function trafficDraw(dt){
+ for(let i=traffic.length-1;i>=0;i--){let q=traffic[i];q.z+=dt*(.11+speed/260);if(q.z>1.15){traffic.splice(i,1);continue}let z=Math.max(.03,q.z),py=H*.54+z*z*H*.41,center=W*.5+curve(z)*W*.4,half=W*(.075+z*.35),px=center+q.l*half;carDraw(px,py,.18+z*.62,q.c,false);if(z>.82&&Math.abs(lane*W*.25-q.l*half)<W*.075){speed*=.75;$('condition').textContent='TRAFFIC • SLOW DOWN';toast('Traffic ahead')}}
+}
+function player(){let center=W*.5+curve(1)*W*.4;let col=car==='sedan'?'#273a49':car==='hatch'?'#d9a833':'#e1e5e8';carDraw(center+lane*W*.25,H*.84,.72,col,true)}
+function rainDraw(dt){
+ const current=weather==='rain'||(weather==='auto'&&Math.sin(t*.018)>.82);
+ if(!current){rain=[];return}if(rain.length<85)for(let i=rain.length;i<85;i++)rain.push([Math.random()*W,Math.random()*H,8+Math.random()*12]);
+ x.strokeStyle='#d7efff99';x.lineWidth=1.2;for(let q of rain){q[1]+=q[2]*dt*20;if(q[1]>H){q[0]=Math.random()*W;q[1]=-20}x.beginPath();x.moveTo(q[0],q[1]);x.lineTo(q[0]-5,q[1]+15);x.stroke()}$('condition').textContent='RAIN • WET ROAD'
+}
+function fog(){const on=weather==='fog'||(weather==='auto'&&Math.sin(t*.011)<-.9);if(on){x.fillStyle='#dfe9e955';x.fillRect(0,0,W,H);$('condition').textContent='FOG • LOW VISIBILITY'}}
+function spawnTraffic(){const cols=['#c84d45','#3f7fba','#e0b440','#7c5d9c','#dde0e1','#2d6d50'];traffic.push({l:Math.random()>.5?.34:-.34,z:.03,c:cols[(Math.random()*cols.length)|0]})}
+function update(dt){
+ if(input.g)speed+=cars[car].acc*dt;else speed-=18*dt;if(input.b)speed-=95*dt;speed=Math.max(0,Math.min(cars[car].max,speed));
+ let st=(.55+speed/160)*cars[car].handle*dt;if(input.l)lane-=st;if(input.r)lane+=st;lane=Math.max(-.96,Math.min(.96,lane));
+ dist+=speed*dt/3600;fuel=Math.max(0,fuel-speed*dt*.00075);if(fuel<=0)speed=Math.max(0,speed-80*dt);t+=dt*(.8+speed/55);spawn-=dt;if(spawn<=0&&traffic.length<7){spawnTraffic();spawn=.8+Math.random()*1.5}
+ if(!input.g&&!input.b&&speed<1)speed=0;
+ $('speed').textContent=Math.round(speed);$('gear').textContent=speed<2?'N':speed<35?'1':speed<70?'2':speed<105?'3':speed<145?'4':'5';$('fuel').textContent=Math.round(fuel);
+ if(!(weather==='rain'||weather==='fog')&&!(routes[route].water&&dist%11>5.4&&dist%11<6.8))$('condition').textContent=speed>145?'HIGH SPEED':'CLEAR ROAD';
+ updateAudio()
+}
+function render(dt){sky();backdrop();waterfall();road();trafficDraw(dt);player();rainDraw(dt);fog()}
+function loop(now){let dt=Math.min(.04,(now-last)/1000);last=now;if(playing&&!paused)update(dt);render(playing&&!paused?dt:0);requestAnimationFrame(loop)}
+
+function initAudio(){if(audio)return;audio=new (window.AudioContext||window.webkitAudioContext)();let master=audio.createGain();master.gain.value=.42;master.connect(audio.destination);engGain=audio.createGain();engGain.gain.value=.01;eng=audio.createOscillator();eng.type='sawtooth';eng.frequency.value=55;let filter=audio.createBiquadFilter();filter.type='lowpass';filter.frequency.value=600;eng.connect(filter);filter.connect(engGain);engGain.connect(master);eng.start();let noise=audio.createBufferSource(),buf=audio.createBuffer(1,audio.sampleRate*2,audio.sampleRate),a=buf.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;noise.buffer=buf;noise.loop=true;let f=audio.createBiquadFilter();f.type='bandpass';f.frequency.value=850;windGain=audio.createGain();windGain.gain.value=0;noise.connect(f);f.connect(windGain);windGain.connect(master);noise.start();audio._master=master}
+function updateAudio(){if(!audio)return;let p=speed/205,n=audio.currentTime;eng.frequency.setTargetAtTime(55+p*175,n,.04);engGain.gain.setTargetAtTime(.015+p*.08,n,.08);windGain.gain.setTargetAtTime(p*p*.05,n,.1)}
+function horn(){initAudio();audio.resume();let n=audio.currentTime;for(const [f,d] of [[370,0],[494,.012]]){let o=audio.createOscillator(),g=audio.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(.0001,n+d);g.gain.exponentialRampToValueAtTime(.13,n+d+.02);g.gain.exponentialRampToValueAtTime(.0001,n+d+.34);o.connect(g);g.connect(audio._master);o.start(n+d);o.stop(n+d+.36)}}
+function toast(m){let el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1100)}
+function start(){route=$('route').value;car=$('car').value;weather=$('weather').value;$('routeName').textContent=routes[route].name;speed=0;lane=0;dist=0;fuel=100;traffic=[];playing=true;paused=false;$('menu').classList.add('hidden');$('hud').classList.remove('hidden');initAudio();audio.resume()}
+function bind(id,k){let e=$(id);let on=q=>{q.preventDefault();input[k]=true;if(audio)audio.resume()},off=q=>{q.preventDefault();input[k]=false};e.addEventListener('pointerdown',on);e.addEventListener('pointerup',off);e.addEventListener('pointercancel',off);e.addEventListener('pointerleave',off)}
+bind('left','l');bind('right','r');bind('gas','g');bind('brake','b');
+$('start').onclick=start;$('horn').onclick=horn;$('pause').onclick=()=>{paused=true;$('pauseText').textContent=Math.round(speed)+' km/h • '+dist.toFixed(1)+' km driven';$('pauseBox').classList.remove('hidden')};$('resume').onclick=()=>{paused=false;$('pauseBox').classList.add('hidden')};$('restart').onclick=()=>{speed=0;lane=0;dist=0;fuel=100;traffic=[];paused=false;$('pauseBox').classList.add('hidden')};$('mainMenu').onclick=()=>{playing=false;paused=false;$('hud').classList.add('hidden');$('pauseBox').classList.add('hidden');$('menu').classList.remove('hidden');speed=0};
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft')input.l=true;if(e.key==='ArrowRight')input.r=true;if(e.key==='ArrowUp')input.g=true;if(e.key==='ArrowDown')input.b=true;if(e.key.toLowerCase()==='h')horn()});addEventListener('keyup',e=>{if(e.key==='ArrowLeft')input.l=false;if(e.key==='ArrowRight')input.r=false;if(e.key==='ArrowUp')input.g=false;if(e.key==='ArrowDown')input.b=false});
+requestAnimationFrame(loop)
+})();
+</script>
+</body>
+</html>
