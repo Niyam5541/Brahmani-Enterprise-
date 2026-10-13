@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout isolated build branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Unpack Java Android source
         shell: bash
         run: |
@@ -24,23 +24,23 @@ jobs:
           tar -xJf /tmp/BlockbusterAutoPlayer.tar.xz
           test -f BlockbusterAutoPlayer/app/build.gradle
       - name: Set up Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
         with:
           distribution: temurin
           java-version: '17'
       - name: Set up Gradle 8.10.2
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a
         with:
           gradle-version: '8.10.2'
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407
       - name: Install Android API 35
         run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0'
       - name: Compile debug APK
         working-directory: BlockbusterAutoPlayer
         run: gradle :app:assembleDebug --no-daemon --stacktrace
       - name: Upload installable debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: Blockbuster-Auto-Player-v0.3-debug-APK
           path: BlockbusterAutoPlayer/app/build/outputs/apk/debug/app-debug.apk
