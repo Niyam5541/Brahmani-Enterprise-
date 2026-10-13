@@ -1,4 +1,4 @@
-name: Blockbuster Auto Player APK (Ultra Fast V0.7)
+name: Blockbuster Auto Player APK (MAX V0.8)
 on:
   push:
     branches:
@@ -32,6 +32,13 @@ jobs:
           PY
           python3 blockbuster-build/stable_v06.py
           python3 blockbuster-build/ultrafast_v07.py
+          python3 - <<'PY'
+          import base64,zlib,hashlib
+          packed=base64.b64decode(open('blockbuster-build/max_v08.py.zb64').read())
+          patch=zlib.decompress(packed)
+          assert hashlib.sha256(patch).hexdigest()=='41941ca673be6906306cc427f203c5549e4a3a5ae13565e15eae42901730d540'
+          exec(compile(patch,'max_v08.py','exec'))
+          PY
           test -f BlockbusterAutoPlayer/app/build.gradle
       - name: Set up Java 17
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
@@ -55,7 +62,7 @@ jobs:
       - name: Upload installable debug APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: Blockbuster-Auto-Player-v0.7-Ultra-Fast-debug-APK
+          name: Blockbuster-Auto-Player-v0.8-MAX-debug-APK
           path: BlockbusterAutoPlayer/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
