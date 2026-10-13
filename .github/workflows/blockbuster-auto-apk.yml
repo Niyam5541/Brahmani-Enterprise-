@@ -47,6 +47,17 @@ jobs:
           PY
           python3 blockbuster-build/max_score_v10.py
           python3 - <<'PY'
+          from pathlib import Path
+          path=Path('BlockbusterAutoPlayer/app/src/main/java/com/niyam/blockauto/QuickSolver.java')
+          src=path.read_text()
+          anchor='    private static double comboSetup(long board){'
+          marker='    // Only cell occupancy counts. The colors are deliberately absent from this solver.'
+          if marker not in src:
+              assert src.count(anchor)==1, 'Expected V1.0 comboSetup'
+              src=src.replace(anchor,marker+'\n'+anchor,1)
+              path.write_text(src)
+          PY
+          python3 - <<'PY'
           import base64,zlib,hashlib
           script=zlib.decompress(base64.b64decode(open('blockbuster-build/v11_unlimited_combo.zb64').read()))
           assert hashlib.sha256(script).hexdigest()=='d1fb2092a64ec641239f236857aca929e9aa141923fca958bf4db7d7cb5f4d00'
