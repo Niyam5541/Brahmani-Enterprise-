@@ -63,6 +63,29 @@ jobs:
           assert hashlib.sha256(script).hexdigest()=='d1fb2092a64ec641239f236857aca929e9aa141923fca958bf4db7d7cb5f4d00'
           exec(compile(script,'v11_unlimited_combo.py','exec'))
           PY
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('BlockbusterAutoPlayer/app/src/main/java/com/niyam/blockauto/QuickSolver.java')
+          src=p.read_text()
+          token='    private static int comboValue(int lines){'
+          first=src.find(token)
+          second=src.find(token,first+len(token))
+          assert first>=0 and second>first, 'Expected old and new combo calculators'
+          depth=0
+          end=-1
+          for i in range(src.index('{',first),len(src)):
+              if src[i]=='{': depth+=1
+              elif src[i]=='}':
+                  depth-=1
+                  if depth==0:
+                      end=i+1
+                      break
+          assert end>first
+          src=src[:first]+src[end:]
+          assert src.count(token)==1
+          p.write_text(src)
+          print('Retained one unlimited-lines comboValue')
+          PY
           test -f BlockbusterAutoPlayer/app/build.gradle
       - name: Set up Java 17
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
