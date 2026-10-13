@@ -2,7 +2,7 @@ from pathlib import Path
 root=Path("BlockbusterAutoPlayer/app")
 q=root/"src/main/java/com/niyam/blockauto/QuickSolver.java"
 s=q.read_text()
-anchor="    // Strongly prefer multi-line clears in one drop (2x/3x/4x), not just several single clears."
+anchor="    public static GameSolver.Move bestMove(long board, GameSolver.Piece[] pieces,boolean rotate,boolean mirror){"
 assert s.count(anchor)==1, "Expected v0.9 combo scorer"
 setup="""    // Colors do not appear in strategy: only occupied 8x8 cells and piece shapes.
     // Prepare multiple nearly full lines with compatible gaps for the next large clear.
