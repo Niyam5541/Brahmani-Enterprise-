@@ -1,4 +1,4 @@
-name: Blockbuster Auto Player APK (MAX Combo V1.1)
+name: Blockbuster Auto Player APK (MAX BOOM V1.2)
 on:
   push:
     branches:
@@ -86,6 +86,12 @@ jobs:
           p.write_text(src)
           print('Retained one unlimited-lines comboValue')
           PY
+          python3 - <<'PY'
+          import base64,zlib,hashlib
+          source=zlib.decompress(base64.b64decode(open('blockbuster-build/v12_max_boom_patch.zb64').read()))
+          assert hashlib.sha256(source).hexdigest()=='c7016fdd5f8367d0f3e62dfdce961ca6c3e61b728c7395bfe71470121175da33', 'V1.2 patch checksum mismatch'
+          exec(compile(source,'v12_max_boom_patch.py','exec'))
+          PY
           test -f BlockbusterAutoPlayer/app/build.gradle
       - name: Set up Java 17
         uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
@@ -109,7 +115,7 @@ jobs:
       - name: Upload installable debug APK
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: Blockbuster-MAX-Combo-v1.1-APK
+          name: Blockbuster-MAX-BOOM-v1.2-APK
           path: BlockbusterAutoPlayer/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
